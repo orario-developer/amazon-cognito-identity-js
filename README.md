@@ -1,3 +1,21 @@
+# 【井口追記】dist/amazon-cognito-identity.min.jsのビルド方法
+- npm run buildでどうしてもエラーが出ていたためAWSのサポートに問い合わせた結果返ってきた内容メモ
+```
+npm install --save-dev webpack json-loader
+npm install babel
+npm install babel-core
+npm install babel-loader
+npm install babel-preset-es2015 --save --no-bin-links
+　→ビルドに必要なパッケージをインストールします。
+
+vim webpack.config.js
+　→エラー回避の為、ファイル内の"babel"を全て"babel-loader"へ置換します。
+
+npm run build
+　→ビルドします。
+```
+- 以下 フォーク元README
+
 # Amazon Cognito Identity SDK for JavaScript
 
 You can now use Amazon Cognito to easily add user sign-up and sign-in to your mobile and web apps. Your User Pool in Amazon Cognito is a fully managed user directory that can scale to hundreds of millions of users, so you don't have to worry about building, securing, and scaling a solution to handle user management and authentication.
