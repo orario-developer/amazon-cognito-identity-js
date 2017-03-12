@@ -827,9 +827,12 @@ export default class CognitoUser {
       return callback(new Error('Username is null. Cannot retrieve a new session'), null);
     }
 
+    // 常に更新するようにする added by iguchi 17.3.11
+/*
     if (this.signInUserSession != null && this.signInUserSession.isValid()) {
       return callback(null, this.signInUserSession);
     }
+*/
 
     const keyPrefix = `CognitoIdentityServiceProvider.${this.pool.getClientId()}.${this.username}`;
     const idTokenKey = `${keyPrefix}.idToken`;
@@ -847,16 +850,19 @@ export default class CognitoUser {
         RefreshToken: this.storage.getItem(refreshTokenKey),
       });
 
-      const sessionData = {
-        IdToken: idToken,
-        AccessToken: accessToken,
-        RefreshToken: refreshToken,
-      };
-      const cachedSession = new CognitoUserSession(sessionData);
-      if (cachedSession.isValid()) {
-        this.signInUserSession = cachedSession;
-        return callback(null, this.signInUserSession);
-      }
+      // 常に更新するようにする added by iguchi 17.3.11
+      /*
+            const sessionData = {
+              IdToken: idToken,
+              AccessToken: accessToken,
+              RefreshToken: refreshToken,
+            };
+            const cachedSession = new CognitoUserSession(sessionData);
+            if (cachedSession.isValid()) {
+              this.signInUserSession = cachedSession;
+              return callback(null, this.signInUserSession);
+            }
+      */
 
       if (refreshToken.getToken() == null) {
         return callback(new Error('Cannot retrieve a new session. Please authenticate.'), null);
@@ -1014,6 +1020,26 @@ export default class CognitoUser {
 
     return new CognitoUserSession(sessionData);
   }
+
+  /**
+   * CognitoUserSessionを外から入れられるようにする。
+   * @param authResult
+   */
+  setCognitoUserSession(authResult) {
+    const idToken = new CognitoIdToken(authResult);
+    const accessToken = new CognitoAccessToken(authResult);
+    const refreshToken = new CognitoRefreshToken(authResult);
+
+    const sessionData = {
+      IdToken: idToken,
+      AccessToken: accessToken,
+      RefreshToken: refreshToken,
+    };
+
+    this.signInUserSession = new CognitoUserSession(sessionData);
+    this.cacheTokens();
+  }
+
 
   /**
    * This is used to initiate a forgot password request

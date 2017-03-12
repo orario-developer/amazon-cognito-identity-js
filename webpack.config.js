@@ -57,9 +57,9 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: 'babel',
+        loader: 'babel-loader',
         query: {
-          cacheDirectory: './node_modules/.cache/babel'
+          cacheDirectory: './node_modules/.cache/babel-loader'
         }
       }
     ]
