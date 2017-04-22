@@ -22,16 +22,19 @@ let sqlDataMemory = {},
 class SQLiteStorage {
 
   constructor(){
-    if(typeof PouchDB === 'undefined')
-      throw new Error('PouchDB is undefined.');
+    var self = this;
+    document.addEventListener('deviceready', function () {
+      if(typeof PouchDB === 'undefined')
+        throw new Error('PouchDB is undefined.');
 
-    console.log('SQLiteStorage will be used.');
-    _db = new PouchDB('cognito', {adapter: 'websql'})
-    _db.info().then(this.init)
-
+      console.log('SQLiteStorage will be used.');
+      _db = new PouchDB('cognito', {adapter: 'websql'})
+      _db.info().then(self.init)
+    }, false);
   }
 
-  init(){
+  init(a){
+    console.log(JSON.stringify(a));
     var _opt = {
       include_docs: true,
       attachments: true,
@@ -49,7 +52,8 @@ class SQLiteStorage {
 
   getItem(key){
     var result = this.get(key);
-    return result ? result.value : null;
+    result = result ? result.value : null;
+    return result;
   }
 
   get(key){
